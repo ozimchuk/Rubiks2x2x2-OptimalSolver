@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Generated cube tables and local benchmark output
+move_corntwist
+move_cornperm
+cornerprun
+benchmark-results.json

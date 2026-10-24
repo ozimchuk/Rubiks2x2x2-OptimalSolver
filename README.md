@@ -9,4 +9,39 @@ Ensure that you are using Python 3.
 
 ![](gui_client.jpg "")
 
+## Search-loop optimization
+
+The solver now precompiles the six legal continuations for each previous move
+instead of iterating over all nine moves and rejecting three same-face moves at
+every non-root node. This changes only how the existing same-face rule is
+executed: the solver still returns every optimal maneuver and its public API is
+unchanged.
+
+Run the deterministic benchmark with:
+
+```bash
+python3 benchmark_continuations.py \
+    --samples 10000 --repeats 5 --verify-samples 1000
+```
+
+Move- and pruning-table startup is excluded. Before timing, the benchmark
+checks that the optimized and original loops return exactly the same optimal
+solutions for every verification state.
+
+On the development host with Python 3.12.3, a deterministic 100,000-state
+sample with seven repeats gave these median search times:
+
+- original loop: 4.075 s;
+- precompiled continuations: 2.338 s;
+- runtime reduction: 42.63%, or 1.743x speed-up.
+
+Both modes returned the same aggregate 405,363 optimal solutions, and exact
+solution-set equality was checked on 10,000 states before timing.
+
+The continuation-table regression tests run with:
+
+```bash
+python3 -m unittest test_continuations.py
+```
+
 
